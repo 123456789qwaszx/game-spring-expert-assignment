@@ -22,6 +22,7 @@ import org.hibernate.SessionFactory;
 import org.hibernate.cfg.Configuration;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.BeanUtils;
 import org.springframework.context.ApplicationEventPublisher;
@@ -92,7 +93,8 @@ class ChatServiceTest {
         });
     }
 
-    // @Test
+    @Test
+    @DisplayName("채팅을_저장하고_저장된_필드를_반환한다")
     void savesMessageAndReturnsStoredFields() {
         ChatMessageResponse response = transactions.execute(status -> service.saveMessage(world.getId(), "Alice", "안녕하세요"));
         List<ChatMessage> saved = transactions.execute(status -> entityManager
@@ -106,7 +108,8 @@ class ChatServiceTest {
         assertThat(response.getCreatedAt()).isNotNull().isEqualTo(saved.getFirst().getCreatedAt());
     }
 
-    // @Test
+    @Test
+    @DisplayName("최근_채팅을_선택한_뒤_오래된_순서로_반환한다")
     void selectsLatestThenReturnsAscendingAndIsolatesWorlds() {
         insert(world, "newer", TIME.plusSeconds(1));
         insert(world, "old", TIME.minusSeconds(1));
@@ -118,7 +121,8 @@ class ChatServiceTest {
                 .containsExactly("tie-first", "tie-last", "newer");
     }
 
-    // @Test
+    @Test
+    @DisplayName("조회_개수를_1에서_100사이로_제한한다")
     void appliesLimitBoundsAndReturnsEmptyWhenNoMessages() {
         List<ChatMessageResponse> empty = transactions.execute(status -> service.getRecentMessages(world.getId(), 10));
         assertThat(empty).isEmpty();
@@ -131,7 +135,8 @@ class ChatServiceTest {
         assertThat(maximum.getLast().getContent()).isEqualTo("message-105");
     }
 
-    // @Test
+    @Test
+    @DisplayName("존재하지_않는_월드에는_채팅을_저장하지_않는다")
     void refusesToStoreInMissingWorld() {
         assertThatThrownBy(() -> transactions.execute(status -> service.saveMessage(-1L, "Alice", "hello")))
                 .isInstanceOf(NotFoundException.class);

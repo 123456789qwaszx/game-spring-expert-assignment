@@ -191,3 +191,45 @@ DB의 UNIQUE 제약과 savePlayer()가 동시 요청에서도 최종적으로 �
 
 ===
 
+---- Lv5 ----
+
+[1] 채팅 저장
+
+worldId로 World 조회
+→ 없으면 WORLD_NOT_FOUND
+→ ChatMessage 생성
+→ Repository 저장
+→ ChatMessageResponse 반환
+
+
+[2] 최근 채팅 조회
+
+DB에서는 최근 N개를 찾기 위해
+
+created_at DESC, id DESC
+
+순서로 조회한다.
+
+같은 created_at을 가진 메시지가 있을 수 있으므로
+id를 두 번째 정렬 기준으로 사용한다.
+
+
+[3] 반환 순서
+
+DB 조회:
+최신 → 과거
+
+채팅 화면:
+과거 → 최신
+
+따라서 최근 N개를 조회한 뒤 List를 뒤집어서 반환한다.
+
+
+[4] limit
+
+최소 1
+최대 100
+
+Math.min(Math.max(limit, 1), MAX_LIMIT)
+
+===
