@@ -233,3 +233,54 @@ DB 조회:
 Math.min(Math.max(limit, 1), MAX_LIMIT)
 
 ===
+
+---- Lv6 ----
+
+[1] 최근 채팅 조회 API 연결
+
+GET /worlds/{worldId}/chats?limit=50
+
+Controller
+→ RecentChatQueryService
+→ 최근 채팅 목록 반환
+
+
+[2] @PathVariable
+
+/worlds/{worldId}/chats
+
+URL 경로 안의 worldId를
+Controller 매개변수로 전달한다.
+
+
+[3] @RequestParam
+
+?limit=50
+
+Query Parameter를 메서드 인자로 받는다.
+
+@RequestParam(defaultValue = "50")
+
+을 사용하여 limit이 없으면 50을 사용한다.
+
+
+[4] Controller의 역할
+
+Controller에서는 채팅 정렬이나 limit 보정 같은
+비즈니스 로직을 다시 구현하지 않는다.
+
+HTTP 요청을 해석하고
+Service를 호출한 뒤
+200 OK 응답으로 반환한다.
+
+
+[5] 현재 조회 흐름
+
+WorldChatController
+→ RecentChatQueryService
+→ ChatService
+
+RecentChatQueryService는 이후 Redis Cache를 적용하기 위한
+조회 전용 경계 역할을 한다.
+
+===

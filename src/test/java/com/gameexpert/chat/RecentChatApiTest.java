@@ -6,6 +6,7 @@ import com.gameexpert.chat.controller.WorldChatController;
 import com.gameexpert.chat.dto.ChatMessageResponse;
 import com.gameexpert.chat.service.RecentChatQueryService;
 import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.setup.MockMvcBuilders;
@@ -24,7 +25,8 @@ class RecentChatApiTest {
         mvc = MockMvcBuilders.standaloneSetup(new WorldChatController(service)).build();
     }
 
-    // @Test
+    @Test
+    @DisplayName("최근_채팅을_요청한_limit만큼_조회하여_반환한다")
     void returnsServiceResultsInOrderWithRequestedLimit() throws Exception {
         when(service.getRecentMessages(42L, 2)).thenReturn(List.of(
                 new ChatMessageResponse("Alice", "안녕", LocalDateTime.of(2026, 1, 2, 3, 4, 5)),
@@ -41,7 +43,8 @@ class RecentChatApiTest {
         verifyNoMoreInteractions(service);
     }
 
-    // @Test
+    @Test
+    @DisplayName("limit을_생략하면_기본값_50을_사용한다")
     void usesDefaultLimitAndReturnsEmptyArray() throws Exception {
         when(service.getRecentMessages(7L, 50)).thenReturn(List.of());
         mvc.perform(get("/worlds/7/chats"))
