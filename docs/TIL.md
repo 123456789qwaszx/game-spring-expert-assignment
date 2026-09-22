@@ -184,3 +184,10 @@ DB의 UNIQUE 제약과 savePlayer()가 동시 요청에서도 최종적으로 �
 응답 Body 없음
 
 ===
+
+---- Lv4 ----
+
+[1] WorldService의 createWorld 완성 및 테스트 주석 해제
+
+===
+

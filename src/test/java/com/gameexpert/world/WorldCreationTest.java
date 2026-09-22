@@ -10,6 +10,7 @@ import com.gameexpert.world.repository.WorldRepository;
 import com.gameexpert.world.service.WorldOperations;
 import com.gameexpert.world.service.WorldService;
 import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.mockito.ArgumentCaptor;
 import org.springframework.test.util.ReflectionTestUtils;
@@ -54,25 +55,29 @@ class WorldCreationTest {
         });
     }
 
-    // @Test
+    @Test
+    @DisplayName("첫_번째_월드는_생성할_수_있다")
     void createsFirstWorld() {
         worldCount = 0;
         assertWorldCreated();
     }
 
-    // @Test
+    @Test
+    @DisplayName("세_번째_월드까지_생성할_수_있다")
     void allowsThirdWorld() {
         worldCount = 2;
         assertWorldCreated();
     }
 
-    // @Test
+    @Test
+    @DisplayName("월드가_3개면_추가_생성을_거절한다")
     void rejectsWhenThreeWorldsExist() {
         worldCount = 3;
         assertLimitRejected();
     }
 
-    // @Test
+    @Test
+    @DisplayName("월드_제한을_이미_초과했어도_추가_생성을_거절한다")
     void rejectsWhenLimitAlreadyExceeded() {
         worldCount = 4;
         assertLimitRejected();
