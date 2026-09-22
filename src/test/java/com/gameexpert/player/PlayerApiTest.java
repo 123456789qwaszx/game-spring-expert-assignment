@@ -5,6 +5,7 @@ import com.gameexpert.player.dto.CreatePlayerRequest;
 import com.gameexpert.player.service.PlayerService;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.mockito.ArgumentCaptor;
 import org.springframework.http.MediaType;
@@ -41,7 +42,8 @@ class PlayerApiTest {
         validator.close();
     }
 
-    // @Test
+    @Test
+    @DisplayName("정상_플레이어_등록_요청은_201과_빈_본문을_반환한다")
     void createsPlayerFromJsonAndReturnsCreatedWithoutBody() throws Exception {
         mockMvc.perform(post("/players")
                         .contentType(MediaType.APPLICATION_JSON)
@@ -49,12 +51,15 @@ class PlayerApiTest {
                 .andExpect(status().isCreated())
                 .andExpect(content().string(""));
 
-        ArgumentCaptor<CreatePlayerRequest> request = ArgumentCaptor.forClass(CreatePlayerRequest.class);
+        ArgumentCaptor<CreatePlayerRequest> request =
+                ArgumentCaptor.forClass(CreatePlayerRequest.class);
+
         verify(playerService).createPlayer(request.capture());
         assertEquals("player_1", request.getValue().getNickname());
     }
 
-    // @Test
+    @Test
+    @DisplayName("잘못된_닉네임은_서비스_호출_전에_400으로_거절한다")
     void rejectsInvalidNicknameBeforeCallingService() throws Exception {
         mockMvc.perform(post("/players")
                         .contentType(MediaType.APPLICATION_JSON)
@@ -64,7 +69,8 @@ class PlayerApiTest {
         verifyNoInteractions(playerService);
     }
 
-    // @Test
+    @Test
+    @DisplayName("닉네임이_누락되면_서비스_호출_전에_400으로_거절한다")
     void rejectsMissingNicknameBeforeCallingService() throws Exception {
         mockMvc.perform(post("/players")
                         .contentType(MediaType.APPLICATION_JSON)

@@ -136,3 +136,51 @@ Java Entity
 ===
 
 
+---- Lv3 ----
+
+[1] 플레이어 등록 흐름
+
+POST /players
+→ JSON을 CreatePlayerRequest로 변환
+→ @Valid로 입력 검증
+→ PlayerService
+→ 중복 확인
+→ Player 저장
+→ 201 Created
+
+[2] DTO Validation
+
+@NotBlank
+- null, 빈 문자열, 공백 차단
+
+@Size(min = 2, max = 12)
+- 닉네임 길이 제한
+
+@Pattern(regexp = "^[a-zA-Z0-9_]+$")
+- 영문 대소문자, 숫자, 밑줄만 허용
+
+[3] @RequestBody와 @Valid
+
+@RequestBody
+- JSON을 DTO로 변환
+
+@Valid
+- Controller 본문 실행 전에 DTO의 Validation을 수행
+
+검증 실패 시 Service는 호출되지 않고 400을 반환한다.
+
+[4] 중복 닉네임
+
+문자열 형식 오류가 아니라 현재 DB 상태와 충돌하는 문제이므로
+ConflictException("DUPLICATE_NICKNAME")을 사용한다.
+
+Service에서 existsByNickname()으로 먼저 검사하고,
+DB의 UNIQUE 제약과 savePlayer()가 동시 요청에서도 최종적으로 중복 저장을 막는다.
+
+[5] 성공 응답
+
+플레이어 등록 성공:
+201 Created
+응답 Body 없음
+
+===

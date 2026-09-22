@@ -9,6 +9,7 @@ import java.util.Optional;
 import jakarta.validation.Validation;
 import jakarta.validation.Validator;
 import jakarta.validation.ValidatorFactory;
+import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.mockito.ArgumentCaptor;
 
@@ -17,7 +18,8 @@ import static org.mockito.Mockito.*;
 
 class PlayerRegistrationTest {
 
-    // @Test
+    @Test
+    @DisplayName("정상_닉네임은_통과시킨다")
     void acceptsValidNicknames() {
         try (ValidatorFactory factory = Validation.buildDefaultValidatorFactory()) {
             Validator validator = factory.getValidator();
@@ -27,7 +29,8 @@ class PlayerRegistrationTest {
         }
     }
 
-    // @Test
+    @Test
+    @DisplayName("잘못된_닉네임은_거절한다")
     void rejectsInvalidNicknames() {
         try (ValidatorFactory factory = Validation.buildDefaultValidatorFactory()) {
             Validator validator = factory.getValidator();
@@ -38,7 +41,8 @@ class PlayerRegistrationTest {
         }
     }
 
-    // @Test
+    @Test
+    @DisplayName("신규_사용자는_닉네임으로_저장한다")
     void savesNewPlayer() {
         PlayerRepository repository = mock(PlayerRepository.class);
         PlayerService service = new PlayerService(repository);
@@ -50,7 +54,8 @@ class PlayerRegistrationTest {
         assertEquals("player_1", saved.getValue().getNickname());
     }
 
-    // @Test
+    @Test
+    @DisplayName("중복닉네임은_DUPLICATE_NICKNAME으로_처리_및_저장하지_않는다")
     void rejectsDuplicateWithoutSaving() {
         PlayerRepository repository = mock(PlayerRepository.class);
         when(repository.existsByNickname("player_1")).thenReturn(true);
