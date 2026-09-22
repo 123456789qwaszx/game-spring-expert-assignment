@@ -5,3 +5,134 @@
 ## 발제 과제
 
 ---- Lv1 ----
+
+[1] Docker로 MySQL과 Redis 실행 환경 구성
+
+- MySQL과 Redis는 Spring 애플리케이션 내부가 아니라 별도의 프로세스로 동작한다.
+- Docker Compose를 사용해 이번 프로젝트에서 사용할 MySQL과 Redis를 함께 실행하도록 구성했다.
+
+사용 포트:
+
+```text
+MySQL: localhost:3309 -> container:3306
+Redis: localhost:6379 -> container:6379
+```
+
+Docker Compose의 역할:
+
+```text
+docker-compose.yml
+= MySQL / Redis를 어떤 설정으로 실행할지 정의
+```
+
+---
+
+[2] MySQL 설정
+
+MySQL 컨테이너에서 사용할 데이터베이스와 계정을 지정했다.
+
+```text
+Database: game_expert
+User: game_user
+```
+
+Spring에서는 다음 주소로 접속한다.
+
+```text
+jdbc:mysql://localhost:3309/game_expert
+```
+
+흐름:
+
+```text
+Spring
+→ localhost:3309
+→ Docker Port Mapping
+→ MySQL Container:3306
+→ game_expert DB
+```
+
+---
+
+[3] Redis 설정
+
+Redis는 이후 WebSocket 접속 상태, 캐시 등의 데이터를 저장할 때 사용한다.
+
+현재 Lv1에서는 Redis 서버가 정상적으로 실행되고 Spring이 접근할 수 있는 환경까지만 구성한다.
+
+확인:
+
+```bash
+docker exec game-expert-redis redis-cli PING
+```
+
+결과:
+
+```text
+PONG
+```
+
+---
+
+[4] application.properties 설정
+
+Docker에서 실행한 MySQL과 Redis에 Spring이 접속할 수 있도록 설정했다.
+
+```properties
+spring.datasource.url=${DB_URL:jdbc:mysql://localhost:3309/game_expert}
+spring.datasource.username=${DB_USERNAME:game_user}
+spring.datasource.password=${DB_PASSWORD:game_password}
+
+spring.jpa.hibernate.ddl-auto=update
+
+spring.data.redis.host=${REDIS_HOST:localhost}
+spring.data.redis.port=${REDIS_PORT:6379}
+```
+
+역할을 나누면:
+
+```text
+docker-compose.yml
+= 외부 프로그램을 실행하는 설정
+
+application.properties
+= Spring이 외부 프로그램에 접속하는 설정
+```
+
+`${환경변수:기본값}` 형태를 사용하여 로컬에서는 기본값을 사용하고, 다른 환경에서는 환경변수로 교체할 수 있게 했다.
+
+---
+
+[5] ddl-auto=update
+
+```properties
+spring.jpa.hibernate.ddl-auto=update
+```
+
+JPA Entity 정보를 바탕으로 Hibernate가 기존 테이블을 유지하면서 필요한 테이블이나 컬럼을 갱신한다.
+
+이번 과제에서는 이후 Level에서 Entity의 설정을 변경하면 그 설정이 실제 MySQL Schema에 반영되는 것을 확인할 수 있다.
+
+예:
+
+```text
+Java Entity
+→ JPA Metadata
+→ Hibernate
+→ DDL 실행
+→ MySQL Schema
+```
+
+===
+
+---- Lv2 ----
+
+[1] 월드별 최근 채팅은 world_id로 범위를 좁힌 뒤 created_at 순서로 조회.
+
+[2] 따라서 (world_id, created_at) 복합 인덱스를 사용.
+
+[3] ddl-auto=update에 의해 JPA 선언이 실제 MySQL 인덱스로 반영된다.
+
+===
+
+
