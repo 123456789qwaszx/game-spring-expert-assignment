@@ -1,0 +1,22 @@
+services:
+  mysql:
+    image: mysql:8.0
+    container_name: game-expert-mysql
+    ports:
+      - "3309:3306"
+    environment:
+      MYSQL_DATABASE: game_expert
+      MYSQL_USER: game_user
+      MYSQL_PASSWORD: game_password
+      MYSQL_ROOT_PASSWORD: root_password
+    volumes:
+      - game-expert-mysql-data:/var/lib/mysql
+
+  redis:
+    image: redis:7
+    container_name: game-expert-redis
+    ports:
+      - "6379:6379"
+
+volumes:
+  game-expert-mysql-data:
